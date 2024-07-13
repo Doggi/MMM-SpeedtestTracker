@@ -1,0 +1,17 @@
+/*
+ *
+ * MMM-SpeedtestTracker
+ *
+ * 
+ * MIT Licensed.
+ *
+ * Custom here your css module
+ *
+ */
+ .mmm-speedtest-tracker i {
+    padding-right: 5px;
+ }
+
+ .mmm-speedtest-tracker .measured-value {
+    padding-right: 5px;
+ }
