@@ -12,6 +12,6 @@
     padding-right: 5px;
  }
 
- .mmm-speedtest-tracker .measured-value {
-    padding-right: 5px;
+ .mmm-speedtest-tracker span {
+   padding-right: 5px;
  }

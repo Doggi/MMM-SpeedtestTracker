@@ -9,6 +9,11 @@
 
 Module.register("MMM-SpeedtestTracker", {
 	defaults: {
+		showDownload: true,
+		showUpload: true,
+		showPing: true,
+		showServerName: false,
+		showDate: false,
 		updateInterval: 60000,
 		retryDelay: 5000,
 		dateOptions: {
@@ -64,9 +69,9 @@ Module.register("MMM-SpeedtestTracker", {
 		var dataRequest = new XMLHttpRequest();
 		dataRequest.open("GET", urlApi, true);
 		dataRequest.onreadystatechange = function() {
-			console.log(this.readyState);
+			Log.debug(self.name, this.readyState);
 			if (this.readyState === 4) {
-				console.log(this.status);
+				Log.debug(self.name, this.status);
 				if (this.status === 200) {
 					self.processData(JSON.parse(this.response));
 				} else if (this.status === 401) {
@@ -102,10 +107,11 @@ Module.register("MMM-SpeedtestTracker", {
 			self.getData();
 		}, nextLoad);
 	},
-
+	/*
 	getHeader: function() {
 		return "Speedtest Tracker";
 	},
+	*/
 
 	getDom: function() {
 		var self = this;
@@ -115,78 +121,86 @@ Module.register("MMM-SpeedtestTracker", {
 		wrapper.classList.add("mmm-speedtest-tracker");
 		// If this.dataRequest is not empty
 		if (this.dataRequest) {
+			let row1 = document.createElement("div");
+			let row2 = document.createElement("div");
+			row2.classList.add("xsmall", "light");
+
 			//download
-			let downloadIcon = document.createElement("i");
-			downloadIcon.classList.add("fa-solid", "fa-download");
+			if(this.config.showDownload){
+				let downloadIcon = document.createElement("i");
+				downloadIcon.classList.add("fa-solid", "fa-download");
 
-			let downloadTextContainer = document.createElement("span");
-			downloadTextContainer.classList.add("bright");
-			
-			let downloadText = document.createTextNode(this.dataRequest.data.download + " Mbps");
-			downloadTextContainer.appendChild(downloadText);
+				let downloadTextContainer = document.createElement("span");
+				downloadTextContainer.classList.add("bright");
+				
+				let downloadText = document.createTextNode(this.dataRequest.data.download + " Mbps");
+				downloadTextContainer.appendChild(downloadText);
 
-			let download = document.createElement("span");
-			download.classList.add("measured-value");
-			download.appendChild(downloadIcon);
-			download.appendChild(downloadTextContainer);
-			wrapper.appendChild(download);
-
+				let download = document.createElement("span");
+				download.appendChild(downloadIcon);
+				download.appendChild(downloadTextContainer);
+				row1.appendChild(download);
+			}
 			// upload
-			let uploadIcon = document.createElement("i");
-			uploadIcon.classList.add("fa-solid", "fa-upload");
+			if(this.config.showUpload){
+				let uploadIcon = document.createElement("i");
+				uploadIcon.classList.add("fa-solid", "fa-upload");
 
-			let uploadTextContainer = document.createElement("span");
-			uploadTextContainer.classList.add("bright");
+				let uploadTextContainer = document.createElement("span");
+				uploadTextContainer.classList.add("bright");
 
-			let uploadText = document.createTextNode(this.dataRequest.data.upload + " Mbps");
-			uploadTextContainer.appendChild(uploadText);
+				let uploadText = document.createTextNode(this.dataRequest.data.upload + " Mbps");
+				uploadTextContainer.appendChild(uploadText);
 
-			let upload = document.createElement("span");
-			upload.classList.add("measured-value");
-			upload.appendChild(uploadIcon);
-			upload.appendChild(uploadTextContainer);
-			wrapper.appendChild(upload);
-
+				let upload = document.createElement("span");
+				upload.appendChild(uploadIcon);
+				upload.appendChild(uploadTextContainer);
+				row1.appendChild(upload);
+			}
 			// ping
-			let pingIcon = document.createElement("i");
-			pingIcon.classList.add("fa-regular", "fa-clock");
+			if(this.config.showPing){
+				let pingIcon = document.createElement("i");
+				pingIcon.classList.add("fa-regular", "fa-clock");
 
-			let pingTextContainer = document.createElement("span");
-			pingTextContainer.classList.add("bright");
+				let pingTextContainer = document.createElement("span");
+				pingTextContainer.classList.add("bright");
 
-			let pingText = document.createTextNode(this.dataRequest.data.ping + " ms");
-			pingTextContainer.appendChild(pingText);
+				let pingText = document.createTextNode(this.dataRequest.data.ping + " ms");
+				pingTextContainer.appendChild(pingText);
 
-			let ping = document.createElement("span");
-			ping.classList.add("measured-value");
-			ping.appendChild(pingIcon);
-			ping.appendChild(pingTextContainer);
-			wrapper.appendChild(ping);
+				let ping = document.createElement("span");
+				ping.appendChild(pingIcon);
+				ping.appendChild(pingTextContainer);
+				row1.appendChild(ping);
+			}
 
 			// server
-			let serverIcon = document.createElement("i");
-			serverIcon.classList.add("fa-solid", "fa-server");
+			if(this.config.showServerName){
+				let serverIcon = document.createElement("i");
+				serverIcon.classList.add("fa-solid", "fa-server");
 
-			let serverText = document.createTextNode(this.dataRequest.data.server_name);
+				let serverText = document.createTextNode(this.dataRequest.data.server_name);
 
-			let server = document.createElement("div");
-			server.classList.add("xsmall", "light");
-			server.appendChild(serverIcon);
-			server.appendChild(serverText);
-			wrapper.appendChild(server);
-			
+				let server = document.createElement("span");
+				server.appendChild(serverIcon);
+				server.appendChild(serverText);
+				row2.appendChild(server);
+			}
 			// date
-			let dateIcon = document.createElement("i");
-			dateIcon.classList.add("fa-solid", "fa-clock-rotate-left");
-			
-			let date = new Date(this.dataRequest.data.updated_at);
-			let dateText = document.createTextNode(date.toLocaleString(config.locale));
-
-			let dateWrapper = document.createElement("div");
-			dateWrapper.classList.add("xsmall", "light");
-			dateWrapper.appendChild(dateIcon);
-			dateWrapper.appendChild(dateText);
-			wrapper.appendChild(dateWrapper);
+			if(this.config.showDate){
+				let dateIcon = document.createElement("i");
+				dateIcon.classList.add("fa-solid", "fa-clock-rotate-left");
+				
+				let date = new Date(this.dataRequest.data.updated_at);
+				let dateText = document.createTextNode(date.toLocaleString(config.locale));
+				let dateWrapper = document.createElement("span");
+				
+				dateWrapper.appendChild(dateIcon);
+				dateWrapper.appendChild(dateText);
+				row2.appendChild(dateWrapper);
+			}
+			wrapper.appendChild(row1);
+			wrapper.appendChild(row2);
 		}
 
 		// Data from helper
