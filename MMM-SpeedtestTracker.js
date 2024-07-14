@@ -36,8 +36,8 @@ Module.register("MMM-SpeedtestTracker", {
       unit: "megabit-per-second",
       unitDisplay: "short",
       notation: "standard",
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
     },
     pingFormatOptions: {
       style: "unit",
@@ -137,7 +137,7 @@ Module.register("MMM-SpeedtestTracker", {
     if (this.dataRequest) {
       let row1 = document.createElement("div");
       let row2 = document.createElement("div");
-      row2.classList.add("xsmall", "light");
+      row2.classList.add("xsmall", "dimmed");
 
       //download
       if (this.config.showDownload) {
